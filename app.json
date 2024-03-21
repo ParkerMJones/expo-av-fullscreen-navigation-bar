@@ -21,9 +21,20 @@
         "backgroundColor": "#ffffff"
       }
     },
-    "androidNavigationBar": {
-      "visible": "sticky-immersive"
+    "androidStatusBar": {
+      "hidden": true
     },
+    "plugins": [
+      [
+        "expo-navigation-bar",
+        {
+          "position": "absolute",
+          "visibility": "hidden",
+          "behavior": "overlay-swipe",
+          "backgroundColor": "#00000080"
+        }
+      ]
+    ],
     "web": {
       "favicon": "./assets/favicon.png"
     }

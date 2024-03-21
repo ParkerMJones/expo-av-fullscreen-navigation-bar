@@ -4,14 +4,27 @@ import React, { useRef, useState } from "react";
 import { Video, ResizeMode } from "expo-av";
 import * as NavigationBar from "expo-navigation-bar";
 import * as ScreenOrientation from "expo-screen-orientation";
+import { setStatusBarHidden } from "expo-status-bar";
 
 export default function App() {
   const videoRef = useRef(null);
-  const [statusBarBackground, setStatusBarBackground] = useState("white");
+  const visibility = NavigationBar.useVisibility();
+
+  React.useEffect(() => {
+    if (visibility === "visible") {
+      const interval = setTimeout(() => {
+        NavigationBar.setVisibilityAsync("hidden");
+      }, /* 3 Seconds */ 3000);
+
+      return () => {
+        clearTimeout(interval);
+      };
+    }
+  }, [visibility]);
 
   return (
     <View style={styles.container}>
-      <StatusBar style="auto" backgroundColor={statusBarBackground} />
+      <StatusBar style="auto" />
       <Video
         ref={videoRef}
         useNativeControls
@@ -32,8 +45,11 @@ export default function App() {
           console.log(e.fullscreenUpdate);
           if (e.fullscreenUpdate === 0 || e.fullscreenUpdate === 1) {
             await ScreenOrientation.unlockAsync();
-            await NavigationBar.setVisibilityAsync("hidden");
-            setStatusBarBackground("black");
+            NavigationBar.setPositionAsync("absolute");
+            NavigationBar.setVisibilityAsync("hidden");
+            NavigationBar.setBehaviorAsync("overlay-swipe");
+            NavigationBar.setBackgroundColorAsync("#00000080"); // `rgba(0,0,0,0.5)`
+            setStatusBarHidden(true, "none");
           }
         }}
       />
